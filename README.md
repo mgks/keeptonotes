@@ -7,7 +7,7 @@ A simple, secure, browser-based tool to convert your Google Keep notes (exported
 
 **[Try it live!](https://keeptonotes.mgks.dev/)**
 
-![Screenshot of the Converter Tool](assets/screenshot.jpg)
+![Screenshot of the Converter Tool](assets/preview.png)
 
 ## Key Features
 
