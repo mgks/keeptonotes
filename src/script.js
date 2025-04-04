@@ -271,7 +271,7 @@ class KeepToEvernoteConverter {
       const convertButton = document.getElementById('convertButton');
       const downloadButton = document.getElementById('downloadButton');
       const dropZone = document.getElementById('dropZone');
-      const infoIcon = document.getElementById('infoIcon');
+      const infoIcons = document.querySelectorAll('.infohowto');
       const closeInfoButton = document.getElementById('closeInfoButton');
       const toggleLogsButton = document.getElementById('toggleLogsButton');
       const selectAllButton = document.getElementById('selectAllButton');
@@ -312,8 +312,10 @@ class KeepToEvernoteConverter {
       });
       
       // Info popup handlers
-      infoIcon.addEventListener('click', () => {
-        document.getElementById('infoOverlay').classList.add('visible');
+      infoIcons.forEach(icon => {
+        icon.addEventListener('click', () => {
+          document.getElementById('infoOverlay').classList.add('visible');
+        });
       });
       
       closeInfoButton.addEventListener('click', () => {
@@ -403,6 +405,9 @@ class KeepToEvernoteConverter {
         // Show the main progress bar
         this.showGlobalProgress();
         this.updateGlobalProgress(0, 'Loading zip file...');
+        
+        // Show toggle logs button
+        document.getElementById('toggleLogsButton').classList.remove('hidden');
         
         const zip = await JSZip.loadAsync(zipFile);
         const fileList = document.getElementById('fileList');
@@ -544,6 +549,9 @@ class KeepToEvernoteConverter {
       this.showGlobalProgress();
       this.updateGlobalProgress(0, 'Starting conversion...');
       this.log('Starting conversion...', 'info');
+      
+      // Show toggle logs button
+      document.getElementById('toggleLogsButton').classList.remove('hidden');
       
       try {
         let htmlFiles = [];
