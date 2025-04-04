@@ -359,11 +359,19 @@ class KeepToEvernoteConverter {
     
     updateFileList(files) {
       const fileList = document.getElementById('fileList');
+      const fileSelectionControls = document.getElementById('fileSelectionControls');
+      const selectedFilesTitle = document.getElementById('selectedFilesTitle');
+      
       fileList.innerHTML = '';
       this.filesToProcess = [];
       this.extractedHtmlFiles = null;
       this.resetProgress();
       document.getElementById('downloadButton').style.display = 'none';
+      
+      // Hide UI elements initially
+      fileList.classList.add('hidden');
+      fileSelectionControls.classList.add('hidden');
+      selectedFilesTitle.classList.add('hidden');
       
       // Extract zip file or handle HTML files
       if (files.length === 1 && (files[0].type === 'application/zip' || files[0].name.endsWith('.zip'))) {
@@ -480,6 +488,14 @@ class KeepToEvernoteConverter {
     
     displayFileList(files) {
       const fileList = document.getElementById('fileList');
+      const fileSelectionControls = document.getElementById('fileSelectionControls');
+      const selectedFilesTitle = document.getElementById('selectedFilesTitle');
+      
+      // Show UI elements
+      fileList.classList.remove('hidden');
+      fileSelectionControls.classList.remove('hidden');
+      selectedFilesTitle.classList.remove('hidden');
+      
       fileList.innerHTML = '';
       this.filesToProcess = files;
       
