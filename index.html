@@ -74,13 +74,13 @@
       
       <input type="file" id="fileInput" multiple accept=".zip,.html">
       
-      <div id="fileSelectionControls">
+      <div id="fileSelectionControls" class="hidden">
         <button id="selectAllButton">Select All</button>
         <button id="deselectAllButton">Deselect All</button>
       </div>
       
-      <h2>Selected Files:</h2>
-      <ul id="fileList"></ul>
+      <h2 class="hidden" id="selectedFilesTitle">Selected Files:</h2>
+      <ul id="fileList" class="hidden"></ul>
       
       <div class="button-row">
         <button id="convertButton" disabled>Convert to ENEX Format</button>
