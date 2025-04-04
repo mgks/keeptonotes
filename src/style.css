@@ -23,23 +23,28 @@
 }
 
 * {
-box-sizing: border-box;
-margin: 0;
-padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
 }
 
 body {
-font-family: sans-serif;
-line-height: 1.6;
-color: var(--text-color);
-padding: 20px;
-padding-bottom: 60px;
+    font-family: sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    padding: 20px;
+    padding-bottom: 60px;
+    justify-content: center;
+    display: flex;
 
 }
 
 .app-container {
-max-width: 800px;
-margin: 0 auto;
+    max-width: 800px;
+    width: 95%;
+    margin: 0 auto;
+
 }
 
 header {
@@ -449,44 +454,6 @@ margin: 15px 0;
 border-radius: 0 4px 4px 0;
 }
 
-.footer {
-text-align: center;
-margin-top: 30px;
-padding: 20px 0;
-color: var(--secondary-text);
-font-size: 14px;
-border-top: 1px solid var(--border-color);
-}
-
-/* Added for better mobile experience */
-@media (max-width: 600px) {
-.app-container {
-padding: 0;
-}
-
-.card {
-padding: 16px;
-border-radius: 0;
-}
-
-#dropZone {
-padding: 20px 15px;
-}
-
-button {
-width: 100%;
-}
-
-#infoContent {
-width: 95%;
-padding: 20px 15px;
-}
-
-.button-row {
-flex-direction: column;
-}
-}
-
 .hidden {
 display: none !important;
 }
@@ -515,4 +482,58 @@ width: 90%;
     text-decoration: underline;
     cursor: pointer;
 
+}
+.footer {
+    text-align: center;
+    padding: .5em 1em;
+    position: fixed;
+    bottom: 1em;
+    width: fit-content;
+    border-radius: 5px;
+    z-index: 100;
+    font-size: 0.9em;
+    font-weight: 700;
+    font-family: monospace;
+    letter-spacing: .25px;
+    background-color: rgba(255, 255, 255, 0.37);
+    color: #f7f7f7;
+    line-height: 1.25em;
+    backdrop-filter: blur(5px);
+
+}
+.footer svg{
+    float: left;
+    margin-right: .75em;
+}
+.footer a {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.8);
+
+}
+@media (max-width: 600px) {
+  .app-container {
+  padding: 0;
+  }
+  
+  .card {
+  padding: 16px;
+  border-radius: 0;
+  }
+  
+  #dropZone {
+  padding: 20px 15px;
+  }
+  
+  button {
+  width: 100%;
+  }
+  
+  #infoContent {
+  width: 95%;
+  padding: 20px 15px;
+  }
+  
+  .button-row {
+  flex-direction: column;
+  }
 }
