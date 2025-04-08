@@ -5,9 +5,9 @@
 
 A simple, secure, browser-based tool to convert your Google Keep notes (exported via Google Takeout) into the `.enex` format, ready for import into Apple Notes or Evernote.
 
-**[Try it live!](https://keeptonotes.mgks.dev/)**
+![Screenshot of the Keep to Notes Tool](assets/preview.png)
 
-![Screenshot of the Converter Tool](assets/preview.png)
+**[Try it live!](https://keeptonotes.mgks.dev/)**
 
 ## Key Features
 
