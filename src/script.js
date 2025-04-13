@@ -262,101 +262,228 @@ class KeepToEvernoteConverter {
       this.extractedHtmlFiles = null;
       this.filesToProcess = []; // Track files with selection state
       this.enexContent = null; // Store the generated ENEX content
+      
+      // DOM element references
+      this.dropZone = document.getElementById('dropZone');
+      this.fileInput = document.getElementById('fileInput');
+      this.fileList = document.getElementById('fileList');
+      this.selectedFilesTitle = document.getElementById('selectedFilesTitle');
+      this.fileSelectionControls = document.getElementById('fileSelectionControls');
+      this.selectAllButton = document.getElementById('selectAllButton');
+      this.deselectAllButton = document.getElementById('deselectAllButton');
+      this.convertButton = document.getElementById('convertButton');
+      this.downloadButton = document.getElementById('downloadButton');
+      this.toggleLogsButton = document.getElementById('toggleLogsButton');
+      this.logsContainer = document.getElementById('logsContainer');
+      this.logsDiv = document.getElementById('logs');
+      this.infoIcon = document.getElementById('infoIcon');
+      this.infoOverlay = document.getElementById('infoOverlay');
+      this.closeInfoButton = document.getElementById('closeInfoButton');
+      this.infoHowtoElements = document.querySelectorAll('.infohowto'); // Select all info trigger elements
+      this.globalProgressContainer = document.getElementById('globalProgressContainer');
+      this.globalProgressBarInner = document.getElementById('globalProgressBarInner');
+      this.globalProgressText = document.getElementById('globalProgressText');
+      
+      // Dark mode toggle
+      this.darkModeToggle = document.getElementById('darkModeToggle');
+      
+      // Elements for GA tracking
+      this.supportButton = document.querySelector('.support-button');
+      this.takeoutLink = document.querySelector('a[href="https://takeout.google.com/"]');
+      this.footerDevLink = document.querySelector('.footer a[href="https://github.com/mgks"]');
+      this.footerRepoLink = document.querySelector('.footer a[href="https://github.com/mgks/keeptonotes"]');
+
+      // Data storage
+      this.allFiles = new Map(); // Store all files extracted from zip/selection
+      this.selectedFiles = new Set(); // Store names of files selected for conversion
+      this.convertedEnexContent = null; // Store converted content
+      this.zipFileName = 'notes'; // Default zip name
+      this.logMessages = []; // Store log messages
+      
+      // Initialize the app
       this.setupEventListeners();
-      this.logMessages = [];
+      this.loadThemePreference(); // Load saved theme preference
     }
     
     setupEventListeners() {
-      const fileInput = document.getElementById('fileInput');
-      const convertButton = document.getElementById('convertButton');
-      const downloadButton = document.getElementById('downloadButton');
-      const dropZone = document.getElementById('dropZone');
-      const infoIcons = document.querySelectorAll('.infohowto');
-      const closeInfoButton = document.getElementById('closeInfoButton');
-      const toggleLogsButton = document.getElementById('toggleLogsButton');
-      const selectAllButton = document.getElementById('selectAllButton');
-      const deselectAllButton = document.getElementById('deselectAllButton');
-      
-      fileInput.addEventListener('change', () => {
-        if (fileInput.files.length > 0) {
-          this.updateFileList(fileInput.files);
+      // --- Dark Mode Toggle ---
+      if (this.darkModeToggle) {
+        this.darkModeToggle.addEventListener('click', () => {
+          const isDarkMode = document.body.classList.toggle('dark-mode');
+          this.saveThemePreference(isDarkMode);
+          
+          if (typeof gtag === 'function') {
+            gtag('event', 'toggle_theme', { 
+              event_category: 'preferences', 
+              event_label: isDarkMode ? 'dark' : 'light' 
+            });
+          }
+        });
+      }
+
+      // --- Drag and Drop ---
+      this.dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.dropZone.classList.add('drag-over');
+      });
+
+      this.dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.dropZone.classList.remove('drag-over');
+      });
+
+      this.dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.dropZone.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          this.log(`Files dropped: ${Array.from(files).map(f => f.name).join(', ')}`, 'info', true);
+          if (typeof gtag === 'function') {
+            gtag('event', 'file_drop', { event_category: 'file_interaction', event_label: 'Drop Zone' });
+          }
+          this.updateFileList(files);
         }
       });
-      
-      convertButton.addEventListener('click', () => {
+
+      // --- File Input Click ---
+      this.dropZone.addEventListener('click', () => {
+          if (typeof gtag === 'function') {
+            gtag('event', 'click', { event_category: 'file_interaction', event_label: 'Drop Zone Click' });
+          }
+          this.fileInput.click(); // Forward click to hidden input
+      });
+
+      // --- File Input Change ---
+      this.fileInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        if (files.length > 0) {
+          this.log(`Files selected: ${Array.from(files).map(f => f.name).join(', ')}`, 'info', true);
+          if (typeof gtag === 'function') {
+            gtag('event', 'file_browse', { event_category: 'file_interaction', event_label: 'Browse Button' });
+          }
+          this.updateFileList(files);
+        }
+        // Reset file input to allow selecting the same file again
+        this.fileInput.value = '';
+      });
+
+      // --- Selection Buttons ---
+      this.selectAllButton.addEventListener('click', () => {
+        if (typeof gtag === 'function') {
+          gtag('event', 'click', { event_category: 'file_interaction', event_label: 'Select All' });
+        }
+        this.fileList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+          if (!checkbox.checked) {
+            checkbox.checked = true;
+            this.updateFileSelection(checkbox);
+          }
+        });
+        this.log(`Selected all files (${this.filesToProcess.length} total)`, 'info', true);
+      });
+
+      this.deselectAllButton.addEventListener('click', () => {
+        if (typeof gtag === 'function') {
+          gtag('event', 'click', { event_category: 'file_interaction', event_label: 'Deselect All' });
+        }
+        this.fileList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+          if (checkbox.checked) {
+            checkbox.checked = false;
+            this.updateFileSelection(checkbox);
+          }
+        });
+        this.log('Deselected all files', 'info', true);
+      });
+
+      // --- Conversion and Download Buttons ---
+      this.convertButton.addEventListener('click', () => {
+        if (typeof gtag === 'function') {
+          gtag('event', 'start_conversion', { event_category: 'conversion', event_label: 'Convert Button Click' });
+        }
+        this.log('Starting conversion process...', 'info', true);
         this.handleConversion();
       });
-      
-      downloadButton.addEventListener('click', () => {
+
+      this.downloadButton.addEventListener('click', () => {
+        if (typeof gtag === 'function') {
+          gtag('event', 'download', { event_category: 'conversion', event_label: 'Download Button Click' });
+        }
         this.downloadEnexFile();
       });
-      
-      // Drag and drop support
-      dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('active');
-      });
-      
-      dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('active');
-      });
-      
-      dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('active');
+
+      // --- Toggle Logs Button ---
+      this.toggleLogsButton.addEventListener('click', () => {
+        const isHidden = this.logsContainer.style.display === 'none' || this.logsContainer.style.display === '';
+        this.logsContainer.style.display = isHidden ? 'block' : 'none';
+        this.toggleLogsButton.textContent = isHidden ? 'Hide Logs' : 'Show Logs';
         
-        if (e.dataTransfer.files.length > 0) {
-          fileInput.files = e.dataTransfer.files;
-          this.updateFileList(e.dataTransfer.files);
+        // Only track, don't add to user-visible logs
+        if (typeof gtag === 'function') {
+          gtag('event', 'toggle_logs', { event_category: 'engagement', event_label: isHidden ? 'Show' : 'Hide' });
         }
       });
-      
-      // Info popup handlers
-      infoIcons.forEach(icon => {
-        icon.addEventListener('click', () => {
-          document.getElementById('infoOverlay').classList.add('visible');
+
+      // --- Info/How-to Overlay ---
+      this.infoHowtoElements.forEach(el => {
+        el.addEventListener('click', () => {
+          if (typeof gtag === 'function') {
+            gtag('event', 'show_info', { event_category: 'engagement', event_label: 'Info Overlay Opened' });
+          }
+          this.infoOverlay.classList.add('visible');
         });
       });
-      
-      closeInfoButton.addEventListener('click', () => {
-        document.getElementById('infoOverlay').classList.remove('visible');
+
+      this.closeInfoButton.addEventListener('click', () => {
+          if (typeof gtag === 'function') {
+            gtag('event', 'hide_info', { event_category: 'engagement', event_label: 'Info Overlay Closed' });
+          }
+          this.infoOverlay.classList.remove('visible');
       });
-      
-      // Close info overlay when clicking outside
-      document.getElementById('infoOverlay').addEventListener('click', (e) => {
-        if (e.target === document.getElementById('infoOverlay')) {
-          document.getElementById('infoOverlay').classList.remove('visible');
+
+      // Close overlay if clicked outside the content area
+      this.infoOverlay.addEventListener('click', (e) => {
+        if (e.target === this.infoOverlay) {
+            if (typeof gtag === 'function') {
+              gtag('event', 'hide_info', { event_category: 'engagement', event_label: 'Info Overlay Closed (Outside Click)' });
+            }
+            this.infoOverlay.classList.remove('visible');
         }
       });
-      
-      // Toggle logs visibility
-      toggleLogsButton.addEventListener('click', () => {
-        const logsContainer = document.getElementById('logsContainer');
-        if (logsContainer.style.display === 'none' || !logsContainer.style.display) {
-          logsContainer.style.display = 'block';
-          toggleLogsButton.textContent = 'Hide Logs';
-        } else {
-          logsContainer.style.display = 'none';
-          toggleLogsButton.textContent = 'Show Logs';
-        }
-      });
-      
-      // Select/Deselect all files
-      selectAllButton.addEventListener('click', () => {
-        const checkboxes = document.querySelectorAll('#fileList input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-          checkbox.checked = true;
-          this.updateFileSelection(checkbox);
+
+      // --- GA Events for External/Support Links ---
+      if (this.supportButton) {
+        this.supportButton.addEventListener('click', () => {
+          if (typeof gtag === 'function') {
+            gtag('event', 'click', { event_category: 'navigation', event_label: 'Support Button Click' });
+          }
         });
-      });
-      
-      deselectAllButton.addEventListener('click', () => {
-        const checkboxes = document.querySelectorAll('#fileList input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-          checkbox.checked = false;
-          this.updateFileSelection(checkbox);
-        });
-      });
+      }
+
+      if (this.takeoutLink) {
+          this.takeoutLink.addEventListener('click', () => {
+              if (typeof gtag === 'function') {
+                gtag('event', 'click', { event_category: 'navigation', event_label: 'Google Takeout Link Click' });
+              }
+          });
+      }
+
+      if (this.footerDevLink) {
+          this.footerDevLink.addEventListener('click', () => {
+              if (typeof gtag === 'function') {
+                gtag('event', 'click', { event_category: 'navigation', event_label: 'Footer Developer Link Click' });
+              }
+          });
+      }
+
+      if (this.footerRepoLink) {
+          this.footerRepoLink.addEventListener('click', () => {
+              if (typeof gtag === 'function') {
+                gtag('event', 'click', { event_category: 'navigation', event_label: 'Footer Repo Link Click' });
+              }
+          });
+      }
     }
     
     updateFileList(files) {
@@ -370,6 +497,9 @@ class KeepToEvernoteConverter {
       this.resetProgress();
       document.getElementById('downloadButton').style.display = 'none';
       
+      // Make the logs button visible as soon as files are selected
+      document.getElementById('toggleLogsButton').classList.remove('hidden');
+      
       // Hide UI elements initially
       fileList.classList.add('hidden');
       fileSelectionControls.classList.add('hidden');
@@ -377,18 +507,18 @@ class KeepToEvernoteConverter {
       
       // Extract zip file or handle HTML files
       if (files.length === 1 && (files[0].type === 'application/zip' || files[0].name.endsWith('.zip'))) {
-        this.log(`Processing zip file: ${files[0].name}`, 'info');
+        // Remove duplicate log message since handleZipFile already logs this
         this.handleZipFile(files[0]);
       } else {
         // Filter and validate HTML files
         const htmlFiles = Array.from(files).filter(file => file.name.endsWith('.html'));
         if (htmlFiles.length === 0) {
-          this.log('No HTML files found. Please upload Google Keep HTML files or a Google Takeout zip.', 'error');
+          this.log('No HTML files found. Please upload Google Keep HTML files or a Google Takeout zip.', 'error', true);
           return;
         }
         
         // Add HTML files to the list
-        this.log(`Found ${htmlFiles.length} HTML files`, 'info');
+        this.log(`Found ${htmlFiles.length} HTML files`, 'info', true);
         this.displayFileList(htmlFiles.map(file => ({
           name: file.name,
           file: file,
@@ -401,14 +531,14 @@ class KeepToEvernoteConverter {
     }
     
     async handleZipFile(zipFile) {
+      this.log(`Processing ZIP file: ${zipFile.name}`, 'info', true);
+      if (typeof gtag === 'function') {
+        gtag('event', 'process_zip_start', { event_category: 'file_interaction', event_label: zipFile.name });
+      }
+      this.showGlobalProgress();
+      this.updateGlobalProgress(0, `Opening ${zipFile.name}...`);
+
       try {
-        // Show the main progress bar
-        this.showGlobalProgress();
-        this.updateGlobalProgress(0, 'Loading zip file...');
-        
-        // Show toggle logs button
-        document.getElementById('toggleLogsButton').classList.remove('hidden');
-        
         const zip = await JSZip.loadAsync(zipFile);
         const fileList = document.getElementById('fileList');
         fileList.innerHTML = '<li class="processing">Extracting files from zip...</li>';
@@ -445,12 +575,15 @@ class KeepToEvernoteConverter {
         
         fileList.innerHTML = '';
         if (htmlFiles.length === 0) {
-          this.log('No HTML files found in the zip file. Make sure this is a valid Google Takeout export.', 'error');
+          this.log('No HTML files found in the zip file. Make sure this is a valid Google Takeout export.', 'error', true);
+          if (typeof gtag === 'function') {
+            gtag('event', 'no_html_files_found', { event_category: 'file_interaction', event_label: zipFile.name });
+          }
           this.hideGlobalProgress();
           return;
         }
         
-        this.log(`Found ${htmlFiles.length} HTML files in the zip`, 'info');
+        this.log(`Found ${htmlFiles.length} HTML files in the zip`, 'info', true);
         
         // Store the extracted files for conversion and display them
         this.extractedHtmlFiles = htmlFiles;
@@ -466,7 +599,10 @@ class KeepToEvernoteConverter {
         
       } catch (error) {
         console.error('Error processing zip file:', error);
-        this.log(`Error processing zip file: ${error.message}`, 'error');
+        this.log(`Error processing ZIP file: ${error.message}`, 'error', true);
+        if (typeof gtag === 'function') {
+          gtag('event', 'process_zip_error', { event_category: 'file_interaction', event_label: zipFile.name, description: error.message });
+        }
         document.getElementById('convertButton').disabled = true;
         this.hideGlobalProgress();
       }
@@ -492,6 +628,9 @@ class KeepToEvernoteConverter {
     }
     
     displayFileList(files) {
+      // Only log to console, not to UI
+      this.log(`Displaying ${files.length} files`, 'info', false);
+      
       const fileList = document.getElementById('fileList');
       const fileSelectionControls = document.getElementById('fileSelectionControls');
       const selectedFilesTitle = document.getElementById('selectedFilesTitle');
@@ -513,6 +652,12 @@ class KeepToEvernoteConverter {
         checkbox.checked = fileInfo.selected;
         checkbox.dataset.index = index;
         checkbox.addEventListener('change', (e) => {
+          if (typeof gtag === 'function') {
+            gtag('event', 'toggle_file_selection', { 
+              event_category: 'file_interaction', 
+              event_label: e.target.checked ? 'select' : 'deselect' 
+            });
+          }
           this.updateFileSelection(e.target);
         });
         
@@ -527,6 +672,9 @@ class KeepToEvernoteConverter {
       
       // Show selection controls
       document.getElementById('fileSelectionControls').style.display = 'flex';
+      
+      // Add a summary message for the user
+      this.log(`Ready to convert ${files.length} notes`, 'info', true);
     }
     
     updateFileSelection(checkbox) {
@@ -537,7 +685,17 @@ class KeepToEvernoteConverter {
       
       // Update convert button status
       const hasSelectedFiles = this.filesToProcess.some(file => file.selected);
+      const selectedCount = this.filesToProcess.filter(file => file.selected).length;
       document.getElementById('convertButton').disabled = !hasSelectedFiles;
+      
+      // Only log when all are selected or none are selected
+      const totalCount = this.filesToProcess.length;
+      if (selectedCount === 0) {
+        this.log(`No files selected for conversion (out of ${totalCount} available)`, 'warning', true);
+      } else if (selectedCount === totalCount && totalCount > 1) {
+        // Only log when all files are selected
+        this.log(`All ${totalCount} files selected for conversion`, 'info', true);
+      }
     }
     
     async handleConversion() {
@@ -548,7 +706,6 @@ class KeepToEvernoteConverter {
       downloadButton.style.display = 'none';
       this.showGlobalProgress();
       this.updateGlobalProgress(0, 'Starting conversion...');
-      this.log('Starting conversion...', 'info');
       
       // Show toggle logs button
       document.getElementById('toggleLogsButton').classList.remove('hidden');
@@ -558,11 +715,16 @@ class KeepToEvernoteConverter {
         const selectedFiles = this.filesToProcess.filter(file => file.selected);
         
         if (selectedFiles.length === 0) {
-          this.log('No files selected for conversion', 'error');
+          this.log('No files selected for conversion', 'error', true);
+          if (typeof gtag === 'function') {
+            gtag('event', 'conversion_error', { event_category: 'conversion', event_label: 'No files selected' });
+          }
           this.hideGlobalProgress();
           convertButton.disabled = false;
           return;
         }
+        
+        this.log(`Converting ${selectedFiles.length} files...`, 'info', true);
         
         if (this.extractedHtmlFiles) {
           // Process HTML files from the zip
@@ -578,7 +740,7 @@ class KeepToEvernoteConverter {
               const htmlFile = new File([content], file.name, { type: 'text/html' });
               htmlFiles.push(htmlFile);
             } catch (error) {
-              this.log(`Failed to extract ${file.name}: ${error.message}`, 'error');
+              this.log(`Failed to extract ${file.name}: ${error.message}`, 'error', true);
             }
           }
           
@@ -590,7 +752,10 @@ class KeepToEvernoteConverter {
         }
         
         if (htmlFiles.length === 0) {
-          this.log('No HTML files found for conversion', 'error');
+          this.log('No HTML files found for conversion', 'error', true);
+          if (typeof gtag === 'function') {
+            gtag('event', 'conversion_error', { event_category: 'conversion', event_label: 'No valid files' });
+          }
           this.hideGlobalProgress();
           convertButton.disabled = false;
           return;
@@ -603,7 +768,8 @@ class KeepToEvernoteConverter {
             this.updateGlobalProgress(20 + (percent * 0.75), message);
           }
           if (message) {
-            this.log(message, type);
+            // Always show converter messages in the UI
+            this.log(message, type, true);
           }
         };
         
@@ -616,7 +782,14 @@ class KeepToEvernoteConverter {
         this.downloadEnexFile();
         
         this.updateGlobalProgress(100, 'Conversion complete!');
-        this.log('Conversion complete! File downloaded.', 'success');
+        this.log(`Successfully converted ${htmlFiles.length} notes to ENEX format`, 'success', true);
+        if (typeof gtag === 'function') {
+          gtag('event', 'conversion_success', { 
+            event_category: 'conversion', 
+            event_label: 'Conversion Complete',
+            value: selectedFiles.length
+          });
+        }
         
         // Show download button for re-downloading
         downloadButton.style.display = 'inline-block';
@@ -628,7 +801,14 @@ class KeepToEvernoteConverter {
         
       } catch (error) {
         console.error('Conversion error:', error);
-        this.log(`Conversion error: ${error.message}`, 'error');
+        this.log(`Conversion error: ${error.message}`, 'error', true);
+        if (typeof gtag === 'function') {
+          gtag('event', 'conversion_error', { 
+            event_category: 'conversion', 
+            event_label: 'Conversion Failed',
+            description: error.message
+          });
+        }
         this.hideGlobalProgress();
       } finally {
         convertButton.disabled = false;
@@ -637,7 +817,10 @@ class KeepToEvernoteConverter {
     
     downloadEnexFile() {
       if (!this.enexContent) {
-        this.log('No converted content available for download', 'error');
+        this.log('No converted content available for download', 'error', true);
+        if (typeof gtag === 'function') {
+          gtag('event', 'download_error', { event_category: 'conversion', event_label: 'No content to download' });
+        }
         return;
       }
       
@@ -648,26 +831,39 @@ class KeepToEvernoteConverter {
       downloadLink.download = 'google_keep_notes.enex';
       downloadLink.click();
       
-      this.log('ENEX file downloaded', 'success');
+      this.log('ENEX file downloaded successfully. You can now import this file into Apple Notes.', 'success', true);
+      if (typeof gtag === 'function') {
+        gtag('event', 'download_success', { 
+          event_category: 'conversion', 
+          event_label: 'Download Completed',
+          value: this.filesToProcess.filter(f => f.selected).length
+        });
+      }
     }
     
     showGlobalProgress() {
-      const progressBar = document.getElementById('globalProgressContainer');
-      progressBar.classList.add('visible');
+      // Only show progress for meaningful operations
+      this.globalProgressContainer.classList.add('visible');
     }
     
     hideGlobalProgress() {
-      const progressBar = document.getElementById('globalProgressContainer');
-      progressBar.classList.remove('visible');
+      this.globalProgressContainer.classList.remove('visible');
     }
     
     updateGlobalProgress(percent, message) {
-      const progressBarInner = document.getElementById('globalProgressBarInner');
-      const progressText = document.getElementById('globalProgressText');
+      // Make progress messages more user-relevant
+      const clampedPercent = Math.max(0, Math.min(100, percent)); // Ensure percent is 0-100
+      this.globalProgressBarInner.style.width = `${clampedPercent}%`;
       
-      progressBarInner.style.width = `${percent}%`;
-      if (message) {
-        progressText.textContent = message;
+      // Only update message if provided and different from previous
+      if (message && this.globalProgressText.textContent !== message) {
+        this.globalProgressText.textContent = message;
+        
+        // For important progress updates (25%, 50%, 75%, 100%), log to UI
+        if (clampedPercent === 25 || clampedPercent === 50 || 
+            clampedPercent === 75 || clampedPercent === 100) {
+          this.log(message, 'info', true);
+        }
       }
     }
     
@@ -680,24 +876,73 @@ class KeepToEvernoteConverter {
       this.hideGlobalProgress();
     }
     
-    log(message, type = 'info') {
-      console.log(`[${type.toUpperCase()}] ${message}`);
+    log(message, type = 'info', showInUi = true) {
+      // Basic console logging always happens
+      if (type === 'error') {
+        console.error(`[${type.toUpperCase()}] ${message}`);
+      } else if (type === 'warning') {
+        console.warn(`[${type.toUpperCase()}] ${message}`);
+      } else {
+        console.log(`[${type.toUpperCase()}] ${message}`);
+      }
       
-      // Add to log array
+      // Add to log array (optional, if needed for other features)
       this.logMessages.push({ message, type, timestamp: new Date() });
       
-      // Update logs in UI
-      const logsContainer = document.getElementById('logs');
-      const logEntry = document.createElement('div');
-      logEntry.className = `log-entry ${type}`;
-      logEntry.textContent = message;
-      logsContainer.appendChild(logEntry);
+      // Only add to visible UI logs if it's user-relevant information
+      if (showInUi) {
+        // Update logs in UI
+        const logsContainer = document.getElementById('logs');
+        const logEntry = document.createElement('div');
+        logEntry.className = `log-entry ${type}`;
+        logEntry.textContent = message;
+        logsContainer.appendChild(logEntry);
+        
+        // Auto-scroll logs to bottom
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+      }
+    }
+
+    // --- Theme Preference Methods ---
+    loadThemePreference() {
+      // Check for saved preference
+      const darkModePreferred = localStorage.getItem('darkMode') === 'true';
       
-      // Auto-scroll logs to bottom
-      logsContainer.scrollTop = logsContainer.scrollHeight;
+      // If no stored preference, check system preference
+      const systemPrefersDark = window.matchMedia && 
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+      if (darkModePreferred || (systemPrefersDark && localStorage.getItem('darkMode') === null)) {
+        document.body.classList.add('dark-mode');
+        
+        // Track system preference application
+        if (typeof gtag === 'function' && systemPrefersDark && localStorage.getItem('darkMode') === null) {
+          gtag('event', 'theme_system_preference', { 
+            event_category: 'preferences', 
+            event_label: 'dark' 
+          });
+        }
+      }
+      
+      // Also listen for system changes
+      if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+          if (localStorage.getItem('darkMode') === null) { // Only auto-switch if user hasn't set a preference
+            if (e.matches) {
+              document.body.classList.add('dark-mode');
+            } else {
+              document.body.classList.remove('dark-mode');
+            }
+          }
+        });
+      }
+    }
+    
+    saveThemePreference(isDarkMode) {
+      localStorage.setItem('darkMode', isDarkMode);
     }
   }
-  
+
   // Initialize the application when the DOM is loaded
   document.addEventListener('DOMContentLoaded', () => {
     new ConverterUI();
