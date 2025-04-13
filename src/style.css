@@ -609,11 +609,6 @@ body.dark-mode #fileList {
 background: rgba(0, 0, 0, 0.2);
 }
 
-body.dark-mode button:hover {
-  /* background-color: var(--dark-button-hover); */
-
-}
-
 body.dark-mode button:disabled {
 background-color: #333;
 color: #666;

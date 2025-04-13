@@ -1,4 +1,4 @@
- # Keep to Notes
+# Keep to Notes
 
 [![Privacy](https://img.shields.io/badge/Privacy-Client--Side%20Only-brightgreen)](https://keeptonotes.mgks.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -14,6 +14,8 @@ A simple, secure, browser-based tool to convert your Google Keep notes (exported
 *   **Privacy First:** Runs **entirely in your browser**. Your notes are never uploaded to any server.
 *   **Easy to Use:** Drag-and-drop your Google Takeout ZIP file or individual Keep HTML files.
 *   **Apple Notes & Evernote Compatible:** Generates a standard `.enex` file recognized by both Apple Notes and Evernote.
+*   **Dark Mode Support:** Switch between light and dark themes with a click. Your preference is saved for future visits.
+*   **Interactive UI:** Real-time progress tracking and detailed logs for the conversion process.
 *   **Handles:**
     *   Note titles and content (HTML).
     *   Creation/modification dates (best effort parsing).
@@ -23,6 +25,7 @@ A simple, secure, browser-based tool to convert your Google Keep notes (exported
     *   Archived note status (adds an "archived" tag).
 *   **File Selection:** Choose which specific notes to include in the conversion.
 *   **No Installation Required:** Works directly in modern web browsers (Chrome, Firefox, Safari, Edge).
+*   **Analytics:** Optional, privacy-respecting analytics to help improve the tool (no personal data is collected).
 
 ## How to Use
 
@@ -46,6 +49,15 @@ A simple, secure, browser-based tool to convert your Google Keep notes (exported
 4.  By default, all notes are selected. Uncheck any notes you *don't* want to convert.
 5.  Click the "**Convert to ENEX Format**" button.
 6.  Your browser will process the notes and automatically download the `google_keep_notes.enex` file.
+
+### Dark Mode
+
+The application supports both light and dark themes:
+
+* Click the sun/moon icon in the top-right corner to switch between themes
+* Your preference is automatically saved for future visits
+* By default, the app will respect your system's dark/light mode preference
+* Dark mode is optimized for reduced eye strain in low-light environments
 
 ### Step 3: Import to Apple Notes
 
@@ -82,6 +94,15 @@ A simple, secure, browser-based tool to convert your Google Keep notes (exported
 ## Privacy
 
 This tool is designed with privacy as a core principle. **All processing happens locally in your web browser.** Your Google Takeout file and the individual notes within it are **never uploaded** to any external server. We have no access to your notes.
+
+We use Google Analytics to collect anonymous usage data that helps us improve the tool. This data includes:
+
+* Which features are being used the most
+* General conversion statistics (number of files, success/error rates)
+* User preferences (like dark/light mode)
+* Basic information about user flow through the application
+
+No personally identifiable information or note content is ever collected. If you prefer not to be tracked, you can use browser extensions or settings to block Google Analytics.
 
 ## Contributing
 
