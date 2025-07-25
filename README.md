@@ -1,7 +1,7 @@
 # Note Migrator
 
-[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Client--Side-brightgreen)](https://keeptonotes.mgks.dev/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Client--Side-brightgreen)](https://notemigrator.mgks.dev/)
+[![License: MIT](https://img.shields.io/github/v/release/mgks/notemigrator)](LICENSE)
 [![version](https://img.shields.io/badge/version-0.2.0-blue)](CHANGELOG.md)
 
 A free, secure, browser-based tool to migrate your notes between popular services like **Google Keep**, **Apple Notes**, **Evernote**, and **Notion**. All processing happens entirely in your browser, ensuring your notes remain private.
