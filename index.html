@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- [ All meta tags, links, etc. remain the same as the previous response ] -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Note Migrator | Convert Google Keep, Apple Notes, Evernote, and more</title>
@@ -39,12 +38,12 @@
     </header>
 
     <div class="support-block">
-            <a href="https://github.com/sponsors/mgks" class="support-button">
-                <span class="fas fa-heart">
-                  <svg width="48" height="48" viewBox="0 0 6.898 6.898" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke-width="0"/><g stroke-linecap="round" stroke-linejoin="round"/><g fill="#f42774"><path opacity=".5" fill-rule="evenodd" clip-rule="evenodd" d="M2.33 5.245C1.523 4.623.575 3.892.575 2.626c0-1.398 1.581-2.389 2.874-1.045v4.311c-.287 0-.575-.221-.873-.457l-.246-.191Z"/><path d="M4.322 5.435c.846-.666 2.001-1.411 2.001-2.809S4.743.237 3.449 1.581v4.311c.287 0 .575-.221.873-.457"/></g></svg>
-                </span> Support the Project
-            </a>
-        </div>
+        <a href="https://github.com/sponsors/mgks" class="support-button" target="_blank" rel="noopener noreferrer">
+            <span class="fas fa-heart">
+                <svg width="48" height="48" viewBox="0 0 6.898 6.898" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke-width="0"/><g stroke-linecap="round" stroke-linejoin="round"/><g fill="#f42774"><path opacity=".5" fill-rule="evenodd" clip-rule="evenodd" d="M2.33 5.245C1.523 4.623.575 3.892.575 2.626c0-1.398 1.581-2.389 2.874-1.045v4.311c-.287 0-.575-.221-.873-.457l-.246-.191Z"/><path d="M4.322 5.435c.846-.666 2.001-1.411 2.001-2.809S4.743.237 3.449 1.581v4.311c.287 0 .575-.221.873-.457"/></g></svg>
+            </span> Support the Project
+        </a>
+    </div>
     
     <div class="card">
       <div class="conversion-selector">
@@ -83,16 +82,36 @@
       
       <input type="file" id="fileInput" multiple class="hidden">
             
-      <h2 class="hidden" id="selectedFilesTitle">Found Notes:</h2>
-      <ul id="fileList" class="hidden"></ul>
+      <div id="file-list-area" class="hidden">
+        <div class="file-list-header">
+            <h3 id="selectedFilesTitle">Found Notes</h3>
+            <div id="fileSelectionControls">
+                <button id="selectAllButton">Select All</button>
+                <button id="deselectAllButton">Deselect All</button>
+            </div>
+        </div>
+        <ul id="fileList"></ul>
+      </div>
       
       <div class="button-row">
         <button id="convertButton" disabled>Convert and Download</button>
+        <div class="secondary-buttons">
+          <button id="clearButton" class="hidden secondary-button">Clear</button>
+          <button id="logsButton" class="hidden secondary-button">Logs</button>
+        </div>
       </div>
+      
+      <div id="logsContainer" class="hidden">
+        <div class="logs-header">
+          <h3>Logs</h3>
+        </div>
+        <div id="logs"></div>
+      </div>
+
     </div>
   </div>
   
-  <div class="footer"><a href="https://github.com/mgks">Developed by @mgks</a> | <a href="https://github.com/mgks/notemigrator">GitHub Repo</a></div>
+  <div class="footer"><a href="https://github.com/mgks" target="_blank" rel="noopener noreferrer">Developed by @mgks</a> | <a href="https://github.com/mgks/notemigrator" target="_blank" rel="noopener noreferrer">GitHub Repo</a></div>
   
   <!-- Converter Modules -->
   <script src="converters/enex-converter.js"></script>
