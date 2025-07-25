@@ -1,46 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- [ All meta tags, links, etc. remain the same as the previous response ] -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-    <!-- Primary Meta Tags -->
-    <title>Google Keep to Apple Notes Converter</title>
-    <meta name="title" content="Google Keep to Apple Notes Converter">
-    <meta name="description" content="Easily migrate Google Keep notes to Apple Notes (and Evernote). Convert Google Takeout ZIP/HTML files to ENEX format with our free, secure, online tool. Perfect for Mac & iPhone users. 100% private, client-side conversion – no data uploaded.">
-    <meta name="keywords" content="google keep, apple notes, evernote, keep to notes, keeptonotes, convert, migrate, import, transfer, google takeout, enex, notes converter, online tool, free, secure, private, client-side, no upload, mac, iphone, ipad, notes migration, export keep, import notes"> <!-- Added 'keeptonotes' explicitly -->
+    <title>Note Migrator | Convert Google Keep, Apple Notes, Evernote, and more</title>
+    <meta name="title" content="Note Migrator | Convert Google Keep, Apple Notes, Evernote, and more">
+    <meta name="description" content="A free, secure, browser-based tool to convert your notes between Google Keep, Apple Notes, Evernote (.enex), and Markdown (Notion). 100% private, client-side conversion.">
+    <meta name="keywords" content="note migrator, notes converter, google keep, apple notes, evernote, onenote, notion, markdown, convert, migrate, import, transfer, google takeout, enex, secure, private, client-side">
     <meta name="author" content="Ghazi Khan">
-
-    <!-- Favicons -->
-    <link rel="icon" href="/assets/favicon-192.png" sizes="192x192" type="image/png">
-    <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
-    <link rel="icon" href="/assets/favicon-16.png" sizes="16x16" type="image/png">
-    <link rel="shortcut icon" type="image/x-icon" href="https://keeptonotes.mgks.dev/favicon.ico">
-  
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://keeptonotes.mgks.dev">
-    <meta property="og:title" content="Google Keep to Apple Notes Converter">
-    <meta property="og:description" content="Easily migrate Google Keep notes to Apple Notes (and Evernote) using our free, secure, online tool. Works perfectly for Mac & iPhone users. 100% private, client-side conversion.">
-    <meta property="og:image" content="https://keeptonotes.mgks.dev/assets/preview.png">
-  
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://keeptonotes.mgks.dev">
-    <meta property="twitter:title" content="Google Keep to Apple Notes Converter">
-    <meta property="twitter:description" content="Easily migrate Google Keep notes to Apple Notes (and Evernote) using our free, secure, online tool. Works perfectly for Mac & iPhone users. 100% private, client-side conversion.">
-    <meta property="twitter:image" content="https://keeptonotes.mgks.dev/assets/preview.png">
-  
-    <!-- Control Search Engine Indexing -->
-    <meta name="robots" content="index, follow">
-  
-    <!-- Libraries & Styles -->
+    <link rel="icon" href="assets/favicon-192.png" sizes="192x192" type="image/png">
+    <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="assets/favicon-16.png" sizes="16x16" type="image/png">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.7/dayjs.min.js"></script>
-
+    <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="src/style.css">
-
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KT0X49LEFM"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -48,138 +25,80 @@
       gtag('js', new Date());
       gtag('config', 'G-KT0X49LEFM');
     </script>
-    <!--
-      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9276682923792397" crossorigin="anonymous"></script>
-    -->
   </head>
 <body>
   <div class="app-container">
     <header>
-      <div class="logo"><img src="assets/logo.png" alt="Keep to Notes"></div>
-      
-      <button id="darkModeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
-        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"/></svg>
-        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z"/></svg>
-      </button>
-      
-      <svg id="infoIcon" class="infohowto" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="currentColor">
-        <path d="M0 0h24v24H0z" fill="none"/>
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-      </svg>
+      <div class="logo">
+        <img src="assets/logo.png" alt="Note Migrator">
+        <button id="darkModeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+          <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"/></svg>
+          <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z"/></svg>
+        </button>
+      </div>
     </header>
+
     <div class="support-block">
-      <a href="https://github.com/sponsors/mgks" class="support-button">
-        <svg xmlns="http://www.w3.org/2000/svg" class="fa-heart" width="20" height="20" viewBox="1.0166668891906738 2.9749999046325684 21.966665267944336 20.024999618530273"><path d="M7 3c-1.535 0-3.078.5-4.25 1.7-2.343 2.4-2.279 6.1 0 8.5L12 23l9.25-9.8c2.279-2.4 2.343-6.1 0-8.5-2.343-2.3-6.157-2.3-8.5 0l-.75.8-.75-.8C10.078 3.5 8.536 3 7 3" fill="#f42774"></path></svg> Support the Project
-      </a>
-    </div>
+            <a href="https://github.com/sponsors/mgks" class="support-button">
+                <span class="fas fa-heart">
+                  <svg width="48" height="48" viewBox="0 0 6.898 6.898" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke-width="0"/><g stroke-linecap="round" stroke-linejoin="round"/><g fill="#f42774"><path opacity=".5" fill-rule="evenodd" clip-rule="evenodd" d="M2.33 5.245C1.523 4.623.575 3.892.575 2.626c0-1.398 1.581-2.389 2.874-1.045v4.311c-.287 0-.575-.221-.873-.457l-.246-.191Z"/><path d="M4.322 5.435c.846-.666 2.001-1.411 2.001-2.809S4.743.237 3.449 1.581v4.311c.287 0 .575-.221.873-.457"/></g></svg>
+                </span> Support the Project
+            </a>
+        </div>
     
     <div class="card">
-      <span class="infohowto">How to Use Keep to Notes</span>
+      <div class="conversion-selector">
+        <div class="selector-wrapper">
+          <label>From</label>
+          <div class="custom-select" id="convertFrom">
+            <div class="select-button" data-value="keep">
+              <span>Google Keep</span>
+              <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+            </div>
+            <div class="select-dropdown"></div>
+          </div>
+        </div>
+        <div class="exchange-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+        </div>
+        <div class="selector-wrapper">
+          <label>To</label>
+          <div class="custom-select" id="convertTo">
+            <div class="select-button" data-value="apple">
+              <span>Apple Notes</span>
+               <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+            </div>
+            <div class="select-dropdown"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box" id="instructions"></div>
+
       <div id="dropZone">
-        <p>Drop your Google Takeout zip or extracted HTML files here</p>
+        <p id="dropZone-text">Drop your export file(s) here</p>
         <p>Or click to browse files</p>
         <p class="upload-limit">Maximum file size: 200 MB</p>
       </div>
       
-      <input type="file" id="fileInput" multiple accept=".zip,.html">
+      <input type="file" id="fileInput" multiple class="hidden">
             
-      <h2 class="hidden" id="selectedFilesTitle">Extracted Notes:</h2>
+      <h2 class="hidden" id="selectedFilesTitle">Found Notes:</h2>
       <ul id="fileList" class="hidden"></ul>
-      <div id="fileSelectionControls" class="hidden">
-        <button id="selectAllButton">Select All</button>
-        <button id="deselectAllButton">Deselect All</button>
-      </div>
       
       <div class="button-row">
-        <button id="convertButton" disabled>Export to Apple Notes</button>
-        <button id="downloadButton">Download Notes</button>
-        <button id="toggleLogsButton" class="hidden">Show Logs</button>
-      </div>
-      
-      <div id="logsContainer">
-        <h2>Log:</h2>
-        <div id="logs"></div>
+        <button id="convertButton" disabled>Convert and Download</button>
       </div>
     </div>
   </div>
   
-  <div id="infoOverlay">
-    <div id="infoContent">
-      <button id="closeInfoButton">&times;</button>
-      <h2>Keep to Notes</h2>
-      <p class="tagline">A browser-based tool to convert Google Keep exports to a format compatible with Apple Notes</p>
-
-      <h3>Step 1: Export Your Google Keep Notes</h3>
-      <ol>
-        <li>Go to <a href="https://takeout.google.com/" target="_blank" rel="noopener noreferrer">Google Takeout</a></li>
-        <li>Make sure only "Keep" is selected (or deselect everything else)</li>
-        <li>Click "Next step" and choose your delivery method (download link via email is recommended)</li>
-        <li>Choose file type (ZIP is recommended) and size</li>
-        <li>Click "Create export" and wait for Google to prepare your data</li>
-        <li>Download the ZIP file when ready</li>
-      </ol>
-      
-      <div class="note-box">
-        <strong>Note:</strong> Google Takeout exports can take some time to prepare, from minutes to hours depending on how much data you have.
-      </div>
-      
-      <h3>Step 2: Convert Your Notes</h3>
-      <ol>
-        <li>Drag and drop the Google Takeout ZIP file onto this page, or click to browse</li>
-        <li>Wait for the tool to process the ZIP file and find your Keep notes</li>
-        <li>Select which notes you want to convert (all are selected by default)</li>
-        <li>Click "Convert to ENEX Format" to generate an Evernote-compatible file</li>
-        <li>Save the generated ENEX file to your device</li>
-      </ol>
-      
-      <h3>Step 3: Import to Apple Notes</h3>
-      <ol>
-        <li>On Mac:
-            <ul>
-                <li>Open Apple Notes on your Mac</li>
-                <li>Go to File → Import to Notes</li>
-                <li>Select your converted ENEX file</li>
-                <li>Your notes will be imported directly into Apple Notes</li>
-            </ul>
-        </li>
-        <li>On iPhone/iPad:
-            <ul>
-                <li>Email the ENEX file to yourself or upload it to iCloud Drive or another cloud storage</li>
-                <li>On your iPhone, open the email or Files app</li>
-                <li>Tap on the ENEX file</li>
-                <li>Select "Share" or tap the share icon</li>
-                <li>Choose "Notes" from the share options</li>
-                <li>Your notes will be imported into the Apple Notes app</li>
-            </ul>
-        </li>
-      </ol>
-      
-      <div class="note-box">
-        <strong>Note:</strong> The generated ENEX file can be imported directly into both Apple Notes and Evernote.
-      </div>
-      
-      <div class="warning-box">
-        <strong>Important:</strong> This tool processes everything locally in your browser. Your notes are never uploaded to any server. However, there are some limitations:
-        <ul>
-          <li>Some formatting and attachments might not transfer perfectly</li>
-          <li>The tool cannot process image references to separate files</li>
-          <li>Very large notebooks may cause your browser to slow down</li>
-        </ul>
-      </div>
-      
-      <h3>Privacy & Data</h3>
-      <p>This tool runs entirely in your browser. Your notes and files are processed locally and are not uploaded to any server. We have no access to your data whatsoever.</p>
-    </div>
-  </div>
+  <div class="footer"><a href="https://github.com/mgks">Developed by @mgks</a> | <a href="https://github.com/mgks/keeptonotes">GitHub Repo</a></div>
   
-  <!-- Global progress bar fixed at bottom of window -->
-  <div id="globalProgressContainer">
-    <div id="globalProgressBar">
-      <div id="globalProgressBarInner"></div>
-    </div>
-    <div id="globalProgressText"></div>
-  </div>
-  <div class="footer"><a href="https://github.com/mgks"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="1.0166668891906738 2.9749999046325684 21.966665267944336 20.024999618530273"><path d="M7 3c-1.535 0-3.078.5-4.25 1.7-2.343 2.4-2.279 6.1 0 8.5L12 23l9.25-9.8c2.279-2.4 2.343-6.1 0-8.5-2.343-2.3-6.157-2.3-8.5 0l-.75.8-.75-.8C10.078 3.5 8.536 3 7 3" fill="#e74c3c"></path></svg> Developed by @mgks</a> | <a href="https://github.com/mgks/keeptonotes">GitHub Repo</a></div>
-  <script src="src/script.js"></script>
+  <!-- Converter Modules -->
+  <script src="converters/enex-converter.js"></script>
+  <script src="converters/keep-converter.js"></script>
+  <script src="converters/markdown-converter.js"></script>
+  <!-- Main Application Logic -->
+  <script src="src/main.js"></script>
 </body>
 </html>
