@@ -1,1 +1,4 @@
 .DS_Store
+context.md
+createContext.js
+node_modules/
