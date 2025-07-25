@@ -2,15 +2,15 @@
 class KeepConverter {
   // Logic to READ Google Keep files
   async parse(files, zip) {
-    const notes = [];
-    for (const file of files) {
-      if (file.name.endsWith('.html')) {
-        const note = await this.parseHtmlFile(file, zip);
-        if (note) notes.push(note);
-      }
+  const notes = [];
+  for (const file of files) {
+    const note = await this.parseHtmlFile(file, zip);
+    if (note) {
+      notes.push(note);
     }
-    return notes;
   }
+  return notes;
+}
 
   async parseHtmlFile(file, zip) {
     try {
@@ -18,9 +18,16 @@ class KeepConverter {
       const parser = new DOMParser();
       const doc = parser.parseFromString(text, 'text/html');
 
-      const title = doc.querySelector('title')?.textContent.replace(/[\\/:"*?<>|]/g, '-') || 'Untitled';
+      // Make parsing more robust. A note might not have a title or content.
+      const title = doc.querySelector('title')?.textContent.replace(/[\\/:"*?<>|]/g, '-') || 'Untitled Note';
       const contentDiv = doc.querySelector('.content');
       let content = contentDiv ? contentDiv.innerHTML : '';
+      
+      // Check if it's a valid Keep note, otherwise skip it.
+      if (!doc.body || (!title && !contentDiv)) {
+          console.warn(`[SKIP] Skipping file '${file.name}' as it does not appear to be a valid Keep note.`);
+          return null;
+      }
       
       const dateDiv = doc.body?.children?.[1];
       const dateText = dateDiv ? dateDiv.textContent.trim() : '';
@@ -31,20 +38,24 @@ class KeepConverter {
         tags.push('archived');
       }
 
-      // Handle attachments (simplified for this example)
-      // A full implementation would extract base64 data and referenced files from the zip
-      
+      // Attachment handling logic (placeholder for now, but shows the structure)
+      const attachments = []; 
+      // In a full implementation, you would parse the .attachments div, find image
+      // references, and use the `zip` object to read their data.
+      // For now, this structure prevents the parser from failing.
+
+      console.log(`[PARSE] Successfully parsed note: '${title}'`);
       return {
         title,
         content,
         created: dt.toISOString(),
         updated: dt.toISOString(),
         tags,
-        attachments: [], // Placeholder for attachment data
+        attachments,
       };
     } catch (e) {
-      console.error(`Failed to parse Keep file ${file.name}:`, e);
-      return null;
+      console.error(`[ERROR] Failed to parse Keep file '${file.name}':`, e);
+      return null; // Return null to indicate failure for this file
     }
   }
 
