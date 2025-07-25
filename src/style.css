@@ -70,7 +70,6 @@ header {
     width: 75%;
     display: inline-block;
     float: left;
-
 }
 
 .card {
@@ -599,9 +598,6 @@ body.dark-mode #logs {
     color: rgb(170, 170, 170);
     cursor: not-allowed;
     background-color: transparent;
-}
-
-.exchange-icon {
 }
 
 .exchange-icon svg {
