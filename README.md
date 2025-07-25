@@ -1,125 +1,87 @@
-# Keep to Notes
+# Note Migrator
 
-[![Privacy](https://img.shields.io/badge/Privacy-Client--Side%20Only-brightgreen)](https://keeptonotes.mgks.dev/)
+[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Client--Side-brightgreen)](https://keeptonotes.mgks.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![version](https://img.shields.io/badge/version-0.2.0-blue)](CHANGELOG.md)
 
-A simple, secure, browser-based tool to convert your Google Keep notes (exported via Google Takeout) into the `.enex` format, ready for import into Apple Notes or Evernote.
+A free, secure, browser-based tool to migrate your notes between popular services like **Google Keep**, **Apple Notes**, **Evernote**, and **Notion**. All processing happens entirely in your browser, ensuring your notes remain private.
 
-![Screenshot of the Keep to Notes Tool](assets/preview.png)
+![Screenshot of the Note Migrator Tool](assets/preview.png)
 
-**[Try it live!](https://keeptonotes.mgks.dev/)**
+**[Try it live!](https://notemigrator.mgks.dev/)**
 
 ## Key Features
 
 *   **Privacy First:** Runs **entirely in your browser**. Your notes are never uploaded to any server.
-*   **Easy to Use:** Drag-and-drop your Google Takeout ZIP file or individual Keep HTML files.
-*   **Apple Notes & Evernote Compatible:** Generates a standard `.enex` file recognized by both Apple Notes and Evernote.
-*   **Dark Mode Support:** Switch between light and dark themes with a click. Your preference is saved for future visits.
-*   **Interactive UI:** Real-time progress tracking and detailed logs for the conversion process.
-*   **Handles:**
-    *   Note titles and content (HTML).
+*   **Multi-Format Conversion:**
+    *   **From:** Google Keep, Evernote (.enex), Markdown (Notion exports).
+    *   **To:** Apple Notes (.enex), Evernote (.enex), Markdown (Notion compatible).
+*   **Easy to Use:** A simple, modern interface to select your "From" and "To" formats and drag-and-drop your exported files.
+*   **Intelligent UI:**
+    *   Dynamic instructions guide you on how to export from your source application.
+    *   Automatic detection of `.zip` files to process notes and attachments seamlessly.
+*   **Handles a Wide Range of Content:**
+    *   Note titles and content (HTML and Markdown).
     *   Creation/modification dates (best effort parsing).
     *   Checklists (checked and unchecked items).
-    *   Google Keep labels (converted to tags).
-    *   Embedded base64 images within notes.
-    *   Archived note status (adds an "archived" tag).
-*   **File Selection:** Choose which specific notes to include in the conversion.
+    *   Tags and labels.
+    *   Embedded and referenced images from exports.
 *   **No Installation Required:** Works directly in modern web browsers (Chrome, Firefox, Safari, Edge).
-*   **Analytics:** Optional, privacy-respecting analytics to help improve the tool (no personal data is collected).
+*   **Dark Mode Support:** Automatically respects your system theme, with a manual toggle available.
 
 ## How to Use
 
-### Step 1: Export Your Google Keep Notes
+### Step 1: Choose Your Conversion Path
 
-1.  Go to [Google Takeout](https://takeout.google.com/).
-2.  Click "**Deselect all**".
-3.  Scroll down and select "**Keep**".
-4.  Click "**Next step**".
-5.  Choose delivery method (e.g., "Send download link via email").
-6.  Select **.zip** for file type. Choose a suitable archive size (2GB is usually fine unless you have massive attachments).
-7.  Click "**Create export**". Google will prepare your archive (this can take minutes or hours).
-8.  Download the ZIP file once it's ready.
+1.  Visit the **[Note Migrator](https://notemigrator.mgks.dev/)** website.
+2.  Using the dropdown menus, select the service you are migrating **From** (e.g., Google Keep) and the service you are migrating **To** (e.g., Apple Notes).
+3.  The instruction box will update automatically, guiding you on how to get your notes out of the source application.
 
-### Step 2: Convert Your Notes Using This Tool
+### Step 2: Export Your Notes from the Source Service
 
-1.  Visit **[keeptonotes.mgks.dev](https://keeptonotes.mgks.dev/)**.
-2.  Drag and drop the downloaded Google Takeout `.zip` file onto the upload area, OR click the area to browse and select the `.zip` file.
-    *   Alternatively, you can upload individual `.html` files extracted from the Keep folder within the Takeout zip.
-3.  The tool will process the file(s) and list the found Keep notes.
-4.  By default, all notes are selected. Uncheck any notes you *don't* want to convert.
-5.  Click the "**Convert to ENEX Format**" button.
-6.  Your browser will process the notes and automatically download the `google_keep_notes.enex` file.
+Follow the on-screen instructions. Here are some examples:
 
-### Dark Mode
+*   **For Google Keep:**
+    1.  Go to [Google Takeout](https://takeout.google.com/).
+    2.  Click "**Deselect all**" and then select only "**Keep**".
+    3.  Create and download the `.zip` export file.
 
-The application supports both light and dark themes:
+*   **For Notion:**
+    1.  In your Notion workspace, click "Settings & members" in the sidebar.
+    2.  Go to "Settings" and find the "Export content" section.
+    3.  Choose "Export all workspace content" and select **Markdown & CSV**.
+    4.  Download the resulting `.zip` file.
 
-* Click the sun/moon icon in the top-right corner to switch between themes
-* Your preference is automatically saved for future visits
-* By default, the app will respect your system's dark/light mode preference
-* Dark mode is optimized for reduced eye strain in low-light environments
+### Step 3: Convert and Download
 
-### Step 3: Import to Apple Notes
+1.  Drag and drop the downloaded `.zip` file (or individual `.html`, `.enex`, `.md` files) onto the upload area on the Note Migrator page.
+2.  The tool will process the files and prepare them for conversion.
+3.  Click the "**Convert and Download**" button.
+4.  Your browser will generate and download the converted notes in the correct format for your destination service.
 
-*   **On Mac:**
-    1.  Open the **Notes** app.
-    2.  Go to `File` > `Import to Notes...`.
-    3.  Select the downloaded `.enex` file.
-    4.  Choose whether to preserve folder structure (if applicable) and click `Import`.
-*   **On iPhone/iPad:**
-    1.  Get the `.enex` file onto your device (e.g., email it to yourself, use AirDrop, save to iCloud Drive/Files).
-    2.  Open the **Files** app and locate the `.enex` file.
-    3.  Tap the file.
-    4.  Tap the **Share** icon.
-    5.  Choose the **Notes** app from the share options.
-    6.  Confirm the import.
+### Step 4: Import Your Notes into the Destination Service
 
-*(The process for importing into Evernote is similar via its desktop or web clients).*
+Follow the on-screen instructions for importing. For example, to import into **Apple Notes**:
 
-## Limitations
-
-*   **Formatting:** While basic HTML is preserved, complex formatting might not transfer perfectly.
-*   **Attachments:** Only embedded base64 images are included directly in the note content. References to separate image files (`.jpg`, `.png` etc. in the Takeout ZIP) are *not* processed or embedded due to browser security limitations and the complexity involved. Other attachment types (audio, PDFs) are not processed.
-*   **Date Parsing:** Uses Day.js for flexible date parsing, but highly unusual date formats might default to the current date.
-*   **Performance:** Very large Takeout files or thousands of notes might slow down your browser during processing. The tool has a nominal 200MB upload limit primarily as a browser performance guideline.
+*   **On Mac:** Open the **Notes** app, go to `File > Import to Notes...`, and select the downloaded `.enex` file.
+*   **On iPhone/iPad:** Save the `.enex` file to your device (e.g., via AirDrop or Files), tap to open it, tap the **Share** icon, and choose the **Notes** app.
 
 ## Technology Stack
 
-*   HTML5
-*   CSS3
-*   Vanilla JavaScript (ES6+)
-*   [JSZip](https://stuk.github.io/jszip/) - For reading `.zip` files in the browser.
-*   [Day.js](https://day.js.org/) - For robust date parsing and formatting.
+*   HTML5, CSS3, Vanilla JavaScript (ES6+)
+*   [JSZip](https://stuk.github.io/jszip/) - For reading `.zip` files.
+*   [Day.js](https://day.js.org/) - For date parsing and formatting.
+*   [Turndown](https://github.com/mixmark-io/turndown) - For converting HTML to Markdown.
+*   [Marked](https://github.com/markedjs/marked) - For converting Markdown to HTML.
 
 ## Privacy
 
-This tool is designed with privacy as a core principle. **All processing happens locally in your web browser.** Your Google Takeout file and the individual notes within it are **never uploaded** to any external server. We have no access to your notes.
-
-We use Google Analytics to collect anonymous usage data that helps us improve the tool. This data includes:
-
-* Which features are being used the most
-* General conversion statistics (number of files, success/error rates)
-* User preferences (like dark/light mode)
-* Basic information about user flow through the application
-
-No personally identifiable information or note content is ever collected. If you prefer not to be tracked, you can use browser extensions or settings to block Google Analytics.
+This tool is designed with privacy as a core principle. All processing happens locally in your web browser. Your note files are never uploaded to any external server. We use optional, anonymous Google Analytics to understand feature usage (e.g., which conversion paths are most popular) to improve the tool. No personal data or note content is ever collected.
 
 ## Contributing
 
-Contributions are welcome! If you find a bug or have an idea for improvement, please open an issue or submit a pull request on the [GitHub repository](https://github.com/mgks/keeptonotes).
+Contributions are welcome! If you find a bug or have an idea for improvement, please open an issue or submit a pull request on the [GitHub repository](https://github.com/mgks/NoteMigrator).
 
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
-
-## Acknowledgements
-
-Based on [Google Keep to Evernote Converter](https://gitlab.com/hmvs1/google-keep-to-evernote-converter) available on GitLab as Python script, which originally was inspired from [this thread](https://discussion.evernote.com/forums/topic/97201-how-to-transfer-all-the-notes-from-google-keep-to-evernote/); while further based on concepts and approaches found in various open-source Google Keep export parsers and ENEX generators.
-
-## Support the Project
-
-**[GitHub Sponsors](https://github.com/sponsors/mgks):** Support this project and my other work by becoming a GitHub sponsor, it means a lot :)
-
-**[Follow Me](https://github.com/mgks) on GitHub** | **Add Project to Watchlist** | **Star the Project**
-
-<br /><img src="https://forthebadge.com/images/badges/built-with-love.svg" alt="Built with Love">
