@@ -2,7 +2,7 @@
     --primary-color: #fcba4d;
     --primary-hover: #ff9d35;
     --success-color: #b55e02;
-    --button-dark: color(srgb 0.91 0.484 0.0319);
+    --button-dark: #f47b20;
     --button-light: color(srgb 0.59 0.3725 0 / 0.71);
     --button-disabled: color(srgb 1 0.8925 0.725);
     --error-color: #e03e30;
@@ -229,61 +229,72 @@ button:disabled {
     color: var(--secondary-text);
 }
 
-h2 {
+h3 {
     margin-bottom: 0.25em;
-    font-size: 1.25em;
-    color: var(--text-color);
+    color: var(--success-color);
+
 }
 
-#fileList {
-    list-style-type: none;
-    max-height: 15em;
-    overflow-y: auto;
-    border: 0px;
-    border-radius: 5px;
-    padding: 8px;
-    background: var(--background-white);
+#file-list-area {
+  margin-top: 1.5em;
 }
 
-#fileList li {
-    padding: 0.25em;
-    font-size: 0.85em;
-    display: flex;
-    align-items: center;
-}
-
-#fileList li:last-child {
-    border-bottom-width: medium;
-    border-bottom-style: none;
-    border-bottom-color: currentcolor;
-}
-
-#fileList li.processing {
-    color: var(--info-color);
-    font-style: italic;
-}
-
-#fileList li input[type="checkbox"] {
-    margin-right: 1em;
-    accent-color: var(--primary-color);
-}
-
-#fileSelectionControls {
-    display: none;
-    margin: 1em 0px;
+.file-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5em;
 }
 
 #fileSelectionControls button {
-    padding: 0.5em 1em;
-    font-size: 0.85em;
-    margin-right: 1em;
-    background-color: var(--button-light);
+  background: none;
+  border: 1px solid var(--button-dark);
+  color: var(--button-dark);
+  padding: 5px 10px;
+  font-size: 0.8em;
+  margin-left: 10px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+#fileSelectionControls button:hover {
+  background-color: var(--button-dark);
+  color: white;
+  transform: none; /* Override default button hover */
+}
+
+#fileList {
+  list-style-type: none;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+#fileList li {
+  padding: 5px 8px;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+}
+
+#fileList li input[type="checkbox"] {
+  margin-right: 12px;
+  accent-color: var(--button-dark);
+}
+
+button.secondary-button:hover {
+    background-color: var(--success-color);
+
 }
 
 .button-row {
     display: flex;
     gap: 1em;
     margin-top: 1em;
+    width: 100%;
+
 }
 
 #toggleLogsButton {
@@ -292,10 +303,10 @@ h2 {
 }
 
 #logsContainer {
-    display: none;
     margin-top: 1em;
-}
 
+}
+.logs-header{margin-bottom:.5em}
 #logs {
     max-height: 150px;
     overflow-y: auto;
@@ -495,8 +506,19 @@ body.dark-mode #dropZone .format-name {
     color: var(--dark-primary);
 }
 
+body.dark-mode #fileSelectionControls button {
+  border-color: var(--dark-primary);
+  color: var(--dark-primary);
+}
+
+body.dark-mode #fileSelectionControls button:hover {
+  background-color: var(--dark-primary);
+  color: var(--dark-card);
+}
+
 body.dark-mode #fileList {
-    background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  border-color: var(--dark-border);
 }
 
 body.dark-mode button:disabled {
