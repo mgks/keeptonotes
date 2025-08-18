@@ -54,7 +54,7 @@ class EnexConverter {
     const currentDate = dayjs().format('YYYYMMDDTHHmmssZ');
     let enexContent = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export3.dtd">
-<en-export export-date="${currentDate}" application="NoteMigrator" version="1.0">`;
+<en-export export-date="${currentDate}" application="NotesMigrator" version="1.0">`;
 
     for (const note of notes) {
       enexContent += this.createNoteXml(note);
