@@ -1,14 +1,14 @@
-# Note Migrator
+# Notes Migrator
 
-[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Client--Side-brightgreen)](https://notemigrator.mgks.dev/)
-[![License: MIT](https://img.shields.io/github/v/release/mgks/notemigrator)](LICENSE)
+[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Client--Side-brightgreen)](https://notesmigrator.mgks.dev/)
+[![License: MIT](https://img.shields.io/github/v/release/mgks/notesmigrator)](LICENSE)
 [![version](https://img.shields.io/badge/version-0.2.0-blue)](CHANGELOG.md)
 
 A free, secure, browser-based tool to migrate your notes between popular services like **Google Keep**, **Apple Notes**, **Evernote**, and **Notion**. All processing happens entirely in your browser, ensuring your notes remain private.
 
-![Screenshot of the Note Migrator Tool](assets/preview.png)
+![Screenshot of the Notes Migrator Tool](assets/preview.png)
 
-**[Try it live!](https://notemigrator.mgks.dev/)**
+**[Try it live!](https://notesmigrator.mgks.dev/)**
 
 ## Key Features
 
@@ -33,7 +33,7 @@ A free, secure, browser-based tool to migrate your notes between popular service
 
 ### Step 1: Choose Your Conversion Path
 
-1.  Visit the **[Note Migrator](https://notemigrator.mgks.dev/)** website.
+1.  Visit the **[Notes Migrator](https://notesmigrator.mgks.dev/)** website.
 2.  Using the dropdown menus, select the service you are migrating **From** (e.g., Google Keep) and the service you are migrating **To** (e.g., Apple Notes).
 3.  The instruction box will update automatically, guiding you on how to get your notes out of the source application.
 
@@ -80,7 +80,7 @@ This tool is designed with privacy as a core principle. All processing happens l
 
 ## Contributing
 
-Contributions are welcome! If you find a bug or have an idea for improvement, please open an issue or submit a pull request on the [GitHub repository](https://github.com/mgks/NoteMigrator).
+Contributions are welcome! If you find a bug or have an idea for improvement, please open an issue or submit a pull request on the [GitHub repository](https://github.com/mgks/NotesMigrator).
 
 ## License
 
