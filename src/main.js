@@ -1,5 +1,5 @@
 // src/main.js
-class NoteMigratorUI {
+class NotesMigratorUI {
   constructor() {
     // --- Configuration Registry for all supported formats ---
     this.formats = {
@@ -402,5 +402,5 @@ class NoteMigratorUI {
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
-  new NoteMigratorUI();
+  new NotesMigratorUI();
 });
